@@ -6,17 +6,21 @@ from .commands import (
 
 def main():
     while True:
-        print("---menu----")
-        print("1. Add Task")
-        print("2. List Tasks")
-        print("3. Update Task")
-        print("4. Delete Task")
-        print("5. Mark Completed")
-        print("6. Exit")
+        print("--- MENYU ---")
+        print("1. Vazifa qoshish")
+        print("2. Vazifalarni korish")
+        print("3. Vazifani yangilash")
+        print("4. Vazifani ochirish")
+        print("5. Tugallangan deb belgilash")
+        print("6. Chiqish")
         
-        choice = input("Select option: ")
-        if choice == "1":
+        tanlov = input("Tanlovni kiriting: ")
+        if tanlov == "1":
             add_task()
-        elif choice == "2":
+        elif tanlov == "2":
             show_tasks()
-        
+        elif tanlov == "6":
+            print(" Dasturdan chiqildi.")
+            break
+        else:
+            print("Notogri tanlov, qayta urinib ko‘ring.\n")

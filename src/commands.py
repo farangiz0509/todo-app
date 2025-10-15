@@ -1,61 +1,55 @@
 from datetime import datetime
-
 from rich.console import Console
 from rich.table import Table
-
-from .storage import (
-    create_task,
-    get_tasks,
-)
+from .storage import create_task, get_tasks
 
 
 def add_task():
-    name = input("Task name: ").strip().capitalize()
-    description = input("Description: ").strip().capitalize()
-    category = input("Category: ").strip().title()
-    due_date = input("Date (example: 2025-10-11): ")
+    nom = input("Vazifa nomi: ").strip().capitalize()
+    tarif = input("Ta’rif: ").strip().capitalize()
+    turkum = input("Kategoriya: ").strip().title()
+    muddat = input("Muddat (masalan: 2025-10-11): ")
 
-    due_date = datetime.strptime(due_date, "%Y-%m-%d")
-    if due_date < datetime.now():
-        print("Date shoulde be greater than or equal to now.")
+    muddat = datetime.strptime(muddat, "%Y-%m-%d")
+    if muddat < datetime.now():
+        print("❗ Sana hozirgi kundan kichik bo‘lmasligi kerak.")
         return
 
-    create_task(name, description, category, due_date)
-    print("✅ Vazifa muvaffaqiyatli qo'shildi!")
+    create_task(nom, tarif, turkum, muddat)
+    print("✅ Vazifa muvaffaqiyatli qo‘shildi!")
 
 
 def show_tasks():
-    tasks = get_tasks()
+    vazifalar = get_tasks()
 
     console = Console()
 
-    table = Table(title="All Tasks")
-    table.add_column("Number")
-    table.add_column("Name")
-    table.add_column("Category")
-    table.add_column("Due Date")
+    jadval = Table(title="Barcha vazifalar")
+    jadval.add_column("Raqam")
+    jadval.add_column("Nomi")
+    jadval.add_column("Kategoriya")
+    jadval.add_column("Muddat")
 
-    for num, task in enumerate(tasks, start=1):
-        du_date = task["due_date"].strftime("%d/%m/%Y")
-        table.add_row(str(num), task["name"], task["category"], du_date)
+    for raqam, vazifa in enumerate(vazifalar, start=1):
+        muddat = vazifa["due_date"].strftime("%d/%m/%Y")
+        jadval.add_row(str(raqam), vazifa["name"], vazifa["category"], muddat)
     
-    console.print(table)
+    console.print(jadval)
 
-    num = int(input("Task detail: "))
-    task = tasks[num - 1]
+    raqam = int(input("Tafsilotlarni ko‘rish uchun vazifa raqamini kiriting: "))
+    vazifa = vazifalar[raqam - 1]
     
-    status = "❌Incompleted"
-    if task["status"]:
-        status = "✅ Completed"
-    du_date = task["due_date"].strftime("%d/%m/%Y")
-    created_date = task["created_date"].strftime("%d/%m/%Y, %H:%M:%S")
+    holat = "❌ Tugallanmagan"
+    if vazifa["status"]:
+        holat = "✅ Tugallangan"
+    muddat = vazifa["due_date"].strftime("%d/%m/%Y")
+    yaratilgan_sana = vazifa["created_date"].strftime("%d/%m/%Y, %H:%M:%S")
 
-    print(f"Task name: {task['name']}")
-    print(f"Description: {task['description']}")
-    print(f"Category: {task['category']}")
-    print(f"Status: {status}")
-    print(f"Due Date: {du_date}")
-    print(f"Created Date: {created_date}")
+    print(f"Vazifa nomi: {vazifa['name']}")
+    print(f"Tarif: {vazifa['description']}")
+    print(f"Kategoriya: {vazifa['category']}")
+    print(f"Holati: {holat}")
+    print(f"Muddat: {muddat}")
+    print(f"Yaratilgan sana: {yaratilgan_sana}")
     
     print()
-    
