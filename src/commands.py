@@ -95,7 +95,7 @@ def delete_task():
     for i, task in enumerate(tasks, start=1):
         print(f"{i}. {task['name']}")
 
-    num = int(input("Select task number to delete: "))
+    num = int(input("ochirmoqchi bolgan tasni tanlang: "))
     task = tasks.pop(num - 1)
 
     save_tasks(tasks)
@@ -105,16 +105,16 @@ def delete_task():
 def mark_completed():
     tasks = get_tasks()
     if len(tasks) == 0:
-        print("No tasks found.\n")
+        print("task topilmadi.\n")
         return
 
     for i, task in enumerate(tasks, start=1):
         mark = "✅" if task["status"] else "❌"
         print(f"{i}. {task['name']} ({mark})")
 
-    num = int(input("Select task number to mark completed: "))
+    num = int(input("tugatilgan task nomerini tanlang: "))
     task = tasks[num - 1]
     task["status"] = True
 
     save_tasks(tasks)
-    print(f" Task '{task['name']}' marked as completed!\n")
+    print(f" Task '{task['name']}' tugatilgan deb belgilandi\n")
