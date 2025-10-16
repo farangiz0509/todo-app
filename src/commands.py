@@ -22,7 +22,7 @@ def add_task():
 def show_tasks():
     tasks = get_tasks()
     if len(tasks) == 0:
-        print("📭 No tasks found.\n")
+        print(" No tasks found.\n")
         return
 
     console = Console()
