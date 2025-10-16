@@ -117,4 +117,4 @@ def mark_completed():
     task["status"] = True
 
     save_tasks(tasks)
-    print(f"🎯 Task '{task['name']}' marked as completed!\n")
+    print(f" Task '{task['name']}' marked as completed!\n")
