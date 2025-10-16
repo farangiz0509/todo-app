@@ -58,13 +58,13 @@ def show_tasks():
 def update_task():
     tasks = get_tasks()
     if len(tasks) == 0:
-        print("No tasks to update.\n")
+        print("update qilish uchun task yoq.\n")
         return
 
     for i, task in enumerate(tasks, start=1):
         print(f"{i}. {task['name']}")
 
-    num = int(input("Select task number to update: "))
+    num = int(input("update qilish uchun task nomer tanlang: "))
     task = tasks[num - 1]
 
     print("Press Enter to keep old value.")
