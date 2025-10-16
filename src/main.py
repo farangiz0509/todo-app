@@ -1,26 +1,30 @@
-from .commands import (
-    add_task,
-    show_tasks,
-)
+from .commands import add_task, show_tasks, update_task, delete_task, mark_completed
 
 
 def main():
     while True:
-        print("--- MENYU ---")
-        print("1. Vazifa qoshish")
-        print("2. Vazifalarni korish")
-        print("3. Vazifani yangilash")
-        print("4. Vazifani ochirish")
-        print("5. Tugallangan deb belgilash")
-        print("6. Chiqish")
-        
-        tanlov = input("Tanlovni kiriting: ")
-        if tanlov == "1":
+        print("------ MENU ------")
+        print("1. Add Task")
+        print("2. Show Tasks")
+        print("3. Update Task")
+        print("4. Delete Task")
+        print("5. Mark Completed")
+        print("6. Exit")
+
+        choice = input("Select option: ")
+
+        if choice == "1":
             add_task()
-        elif tanlov == "2":
+        elif choice == "2":
             show_tasks()
-        elif tanlov == "6":
-            print(" Dasturdan chiqildi.")
+        elif choice == "3":
+            update_task()
+        elif choice == "4":
+            delete_task()
+        elif choice == "5":
+            mark_completed()
+        elif choice == "6":
+            print("👋 Exiting...")
             break
         else:
-            print("Notogri tanlov, qayta urinib ko‘ring.\n")
+            print("Invalid option. Try again.\n")

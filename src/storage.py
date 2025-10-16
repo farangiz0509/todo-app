@@ -12,8 +12,8 @@ if not os.path.exists(DATABASE_URL):
 
 def read_database() -> list[dict]:
     with open(DATABASE_URL) as f:
-        tasks = json.load(f)
-    return tasks
+        data = json.load(f)
+    return data
 
 
 def save_database(tasks: list[dict]):
@@ -21,35 +21,54 @@ def save_database(tasks: list[dict]):
         json.dump(tasks, f, indent=4)
 
 
-def create_task(nom: str, tarif: str, turkum: str, muddat: date) -> bool:
-    vazifalar = read_database()
+def create_task(name: str, description: str, category: str, due_date: date):
+    tasks = read_database()
 
-    oxirgi_vazifa = max(vazifalar, key=lambda v: v['id'], default={"id": 0})
-    vazifalar.append({
-        "id": oxirgi_vazifa["id"] + 1,
-        "name": nom,
-        "description": tarif,
-        "category": turkum,
-        "due_date": muddat.strftime("%d/%m/%Y"),
+    if len(tasks) == 0:
+        new_id = 1
+    else:
+        new_id = tasks[-1]["id"] + 1
+
+    new_task = {
+        "id": new_id,
+        "name": name,
+        "description": description,
+        "category": category,
+        "due_date": due_date.strftime("%d/%m/%Y"),
         "created_date": datetime.now().strftime("%d/%m/%Y, %H:%M:%S"),
-        "status": False,
-    })
+        "status": False
+    }
 
-    save_database(vazifalar)
+    tasks.append(new_task)
+    save_database(tasks)
 
 
 def get_tasks():
-    vazifalar = list(map(
-        lambda v: {
-            "id": v["id"],
-            "name": v["name"],
-            "description": v["description"],
-            "category": v["category"],
-            "due_date": datetime.strptime(v["due_date"], "%d/%m/%Y"),
-            "created_date": datetime.strptime(v["created_date"], "%d/%m/%Y, %H:%M:%S"),
-            "status": v["status"]
-        },
-        read_database(),
-    ))
+    tasks = read_database()
+    result = []
+    for t in tasks:
+        result.append({
+            "id": t["id"],
+            "name": t["name"],
+            "description": t["description"],
+            "category": t["category"],
+            "due_date": datetime.strptime(t["due_date"], "%d/%m/%Y"),
+            "created_date": datetime.strptime(t["created_date"], "%d/%m/%Y, %H:%M:%S"),
+            "status": t["status"]
+        })
+    return result
 
-    return vazifalar
+
+def save_tasks(tasks: list[dict]):
+    new_tasks = []
+    for t in tasks:
+        new_tasks.append({
+            "id": t["id"],
+            "name": t["name"],
+            "description": t["description"],
+            "category": t["category"],
+            "due_date": t["due_date"].strftime("%d/%m/%Y"),
+            "created_date": t["created_date"].strftime("%d/%m/%Y, %H:%M:%S"),
+            "status": t["status"]
+        })
+    save_database(new_tasks)
