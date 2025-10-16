@@ -99,7 +99,7 @@ def delete_task():
     task = tasks.pop(num - 1)
 
     save_tasks(tasks)
-    print(f"🗑️ Task '{task['name']}' deleted.\n")
+    print(f" Task '{task['name']}' deleted.\n")
 
 
 def mark_completed():
