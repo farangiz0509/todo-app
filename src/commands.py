@@ -1,55 +1,120 @@
 from datetime import datetime
 from rich.console import Console
 from rich.table import Table
-from .storage import create_task, get_tasks
+from .storage import create_task, get_tasks, save_tasks
 
 
 def add_task():
-    nom = input("Vazifa nomi: ").strip().capitalize()
-    tarif = input("Ta’rif: ").strip().capitalize()
-    turkum = input("Kategoriya: ").strip().title()
-    muddat = input("Muddat (masalan: 2025-10-11): ")
+    name = input("Task name: ").strip().capitalize()
+    description = input("Description: ").strip().capitalize()
+    category = input("Category: ").strip().title()
+    due_date = input("Due date (YYYY-MM-DD): ").strip()
 
-    muddat = datetime.strptime(muddat, "%Y-%m-%d")
-    if muddat < datetime.now():
-        print("❗ Sana hozirgi kundan kichik bo‘lmasligi kerak.")
+    due_date = datetime.strptime(due_date, "%Y-%m-%d")
+    if due_date < datetime.now():
+        print("Date should be greater than or equal to now.")
         return
 
-    create_task(nom, tarif, turkum, muddat)
-    print("✅ Vazifa muvaffaqiyatli qo‘shildi!")
+    create_task(name, description, category, due_date)
+    print("✅ Task added successfully!\n")
 
 
 def show_tasks():
-    vazifalar = get_tasks()
+    tasks = get_tasks()
+    if len(tasks) == 0:
+        print("📭 No tasks found.\n")
+        return
 
     console = Console()
+    table = Table(title="All Tasks")
 
-    jadval = Table(title="Barcha vazifalar")
-    jadval.add_column("Raqam")
-    jadval.add_column("Nomi")
-    jadval.add_column("Kategoriya")
-    jadval.add_column("Muddat")
+    table.add_column("No.")
+    table.add_column("Name")
+    table.add_column("Category")
+    table.add_column("Due Date")
 
-    for raqam, vazifa in enumerate(vazifalar, start=1):
-        muddat = vazifa["due_date"].strftime("%d/%m/%Y")
-        jadval.add_row(str(raqam), vazifa["name"], vazifa["category"], muddat)
-    
-    console.print(jadval)
+    for i, task in enumerate(tasks, start=1):
+        table.add_row(str(i), task["name"], task["category"], task["due_date"].strftime("%d/%m/%Y"))
 
-    raqam = int(input("Tafsilotlarni ko‘rish uchun vazifa raqamini kiriting: "))
-    vazifa = vazifalar[raqam - 1]
-    
-    holat = "❌ Tugallanmagan"
-    if vazifa["status"]:
-        holat = "✅ Tugallangan"
-    muddat = vazifa["due_date"].strftime("%d/%m/%Y")
-    yaratilgan_sana = vazifa["created_date"].strftime("%d/%m/%Y, %H:%M:%S")
+    console.print(table)
 
-    print(f"Vazifa nomi: {vazifa['name']}")
-    print(f"Tarif: {vazifa['description']}")
-    print(f"Kategoriya: {vazifa['category']}")
-    print(f"Holati: {holat}")
-    print(f"Muddat: {muddat}")
-    print(f"Yaratilgan sana: {yaratilgan_sana}")
-    
+    num = int(input("Task detail number (0 to exit): "))
+    if num == 0:
+        return
+
+    task = tasks[num - 1]
+    status = "✅ Completed" if task["status"] else "❌ Incomplete"
+
+    print("\n--- Task Detail ---")
+    print(f"Name: {task['name']}")
+    print(f"Description: {task['description']}")
+    print(f"Category: {task['category']}")
+    print(f"Status: {status}")
+    print(f"Due Date: {task['due_date'].strftime('%d/%m/%Y')}")
+    print(f"Created: {task['created_date'].strftime('%d/%m/%Y, %H:%M:%S')}")
     print()
+
+
+def update_task():
+    tasks = get_tasks()
+    if len(tasks) == 0:
+        print("No tasks to update.\n")
+        return
+
+    for i, task in enumerate(tasks, start=1):
+        print(f"{i}. {task['name']}")
+
+    num = int(input("Select task number to update: "))
+    task = tasks[num - 1]
+
+    print("Press Enter to keep old value.")
+    name = input(f"New name ({task['name']}): ").strip()
+    description = input(f"New description ({task['description']}): ").strip()
+    category = input(f"New category ({task['category']}): ").strip()
+    due_date = input(f"New due date ({task['due_date'].strftime('%Y-%m-%d')}): ").strip()
+
+    if name != "":
+        task["name"] = name
+    if description != "":
+        task["description"] = description
+    if category != "":
+        task["category"] = category
+    if due_date != "":
+        task["due_date"] = datetime.strptime(due_date, "%Y-%m-%d")
+
+    save_tasks(tasks)
+    print("✅ Task updated successfully!\n")
+
+
+def delete_task():
+    tasks = get_tasks()
+    if len(tasks) == 0:
+        print("No tasks to delete.\n")
+        return
+
+    for i, task in enumerate(tasks, start=1):
+        print(f"{i}. {task['name']}")
+
+    num = int(input("Select task number to delete: "))
+    task = tasks.pop(num - 1)
+
+    save_tasks(tasks)
+    print(f"🗑️ Task '{task['name']}' deleted.\n")
+
+
+def mark_completed():
+    tasks = get_tasks()
+    if len(tasks) == 0:
+        print("No tasks found.\n")
+        return
+
+    for i, task in enumerate(tasks, start=1):
+        mark = "✅" if task["status"] else "❌"
+        print(f"{i}. {task['name']} ({mark})")
+
+    num = int(input("Select task number to mark completed: "))
+    task = tasks[num - 1]
+    task["status"] = True
+
+    save_tasks(tasks)
+    print(f"🎯 Task '{task['name']}' marked as completed!\n")
